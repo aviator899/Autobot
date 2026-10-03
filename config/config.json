@@ -1,0 +1,11 @@
+{
+  "project": "AUTOBOT v2.0",
+  "version": "2.0.0",
+  "author": "aviator899",
+  "description": "Professional Security Orchestration Framework",
+  "settings": {
+    "default_interface": "wlan0",
+    "log_level": "INFO",
+    "theme": "dark_cyan"
+  }
+}

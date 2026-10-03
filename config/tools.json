@@ -1,0 +1,30 @@
+[
+  {
+    "id": "nmap",
+    "name": "Nmap",
+    "category": "network",
+    "command": "nmap",
+    "description": "Network discovery and security auditing"
+  },
+  {
+    "id": "wifite",
+    "name": "WiFite",
+    "category": "wireless",
+    "command": "wifite",
+    "description": "Automated wireless attack tool"
+  },
+  {
+    "id": "sqlmap",
+    "name": "SQLMap",
+    "category": "web",
+    "command": "sqlmap",
+    "description": "Automatic SQL injection tool"
+  },
+  {
+    "id": "msfconsole",
+    "name": "Metasploit",
+    "category": "exploitation",
+    "command": "msfconsole",
+    "description": "Exploitation framework"
+  }
+]

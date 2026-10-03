@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Autobot v2 Web Security Module
+# This script is called by the Python Core Engine
+
+YELLOW='\033[1;33m'
+RED='\033[1;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+function banner() {
+    clear
+    echo -e "${YELLOW}==================================================${NC}"
+    echo -e "${YELLOW}       AUTOBOT v2 - WEB SECURITY               ${NC}"
+    echo -e "${YELLOW}==================================================${NC}"
+}
+
+function sql_injection() {
+    echo -e "\n${YELLOW}[*] SQL Injection (SQLMap)${NC}"
+    read -p "Enter target URL: " URL
+    if [[ -z "$URL" ]]; then return; fi
+
+    echo -e "1) Basic Scan"
+    echo -e "2) Full Database Dump"
+    read -p "Choice: " MODE
+
+    if [[ "$MODE" == "1" ]]; then
+        sqlmap -u "$URL" --batch
+    elif [[ "$MODE" == "2" ]]; then
+        sqlmap -u "$URL" --batch --dbs
+    else
+        echo -e "${RED}[!] Invalid choice${NC}"
+    fi
+}
+
+function directory_brute() {
+    echo -e "\n${YELLOW}[*] Directory Brute-Forcing${NC}"
+    read -p "Enter target URL: " URL
+    if [[ -z "$URL" ]]; then return; fi
+
+    echo -e "Using Gobuster for directory discovery..."
+    # Attempt to use gobuster, fallback to dirb
+    if command -v gobuster &> /dev/null; then
+        read -p "Enter wordlist path (default: /usr/share/wordlists/dirb/common.txt): " WORDLIST
+        WORDLIST=${WORDLIST:-/usr/share/wordlists/dirb/common.txt}
+        gobuster dir -u "$URL" -w "$WORDLIST"
+    elif command -v dirb &> /dev/null; then
+        dirb "$URL"
+    else
+        echo -e "${RED}[!] Neither gobuster nor dirb found!${NC}"
+    fi
+}
+
+function xss_check() {
+    echo -e "\n${YELLOW}[*] XSS Vulnerability Check${NC}"
+    read -p "Enter target URL: " URL
+    if [[ -z "$URL" ]]; then return; fi
+
+    echo -e "${YELLOW}[*] Checking for common XSS vectors...${NC}"
+    # Basic check via curl for common alert(1) reflections
+    curl -s "$URL?q=<script>alert(1)</script>" | grep -i "alert(1)" && echo -e "${GREEN}[+] Potential XSS found!${NC}" || echo -e "${RED}[-] No simple XSS found${NC}"
+}
+
+banner
+echo -e "1) SQL Injection (SQLMap)"
+echo -e "2) Directory Brute-Forcing"
+echo -e "3) XSS Scanner"
+echo -e "0) Return to Main Menu"
+echo -e "\nChoose an option:"
+read OPT
+
+case $OPT in
+    1) sql_injection ;;
+    2) directory_brute ;;
+    3) xss_check ;;
+    *) echo -e "Returning..." ;;
+esac

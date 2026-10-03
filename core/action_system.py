@@ -1,0 +1,32 @@
+import json
+import os
+from typing import List, Dict, Any, Optional
+
+class ActionSystem:
+    def __init__(self, storage_path: str = "config/actions.json"):
+        self.storage_path = storage_path
+        self.actions = self._load_actions()
+
+    def _load_actions(self) -> Dict:
+        if not os.path.exists(self.storage_path):
+            return {}
+        try:
+            with open(self.storage_path, 'r') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+    def save_action(self, name: str, steps: List[Dict[str, Any]]):
+        """
+        Saves a workflow. Steps contain templates.
+        Example step: {"command": "nmap -sV ${Target_IP}", "type": "shell"}
+        """
+        self.actions[name] = steps
+        with open(self.storage_path, 'w') as f:
+            json.dump(self.actions, f, indent=4)
+
+    def get_action(self, name: str) -> Optional[List[Dict[str, Any]]]:
+        return self.actions.get(name)
+
+    def list_actions(self) -> List[str]:
+        return list(self.actions.keys())
